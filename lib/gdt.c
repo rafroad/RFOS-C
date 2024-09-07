@@ -6,23 +6,34 @@
 #include <helper.h>
 #include "gdt.h"
 
-struct GDT_ENTRY{
-    uint16_t limit_0_15;
-    uint16_t base_0_15;
-    uint8_t base16_23;
+GDT_ENTRY gdt[GDT_SIZE];
+GDT_INFO info;
 
-    uint8_t accessed:1;
-    uint8_t r_w:1;
-    uint8_t direction:1;
-    uint8_t executable:1;
-    uint8_t reserved:1;
-    uint8_t privilage_level:1;
-    uint8_t present:1;
-
-
+void gdt_init(void){
+    gdt_fill_entry(1,true, 0);
+    gdt_fill_entry(2,false, 0);
+    gdt_fill_entry(3,true,3);
+    gdt_fill_entry(4,false,3);
+    info.size=sizeof(GDT_ENTRY)*GDT_SIZE-1;
+    info.offset=(uint32_t)&gdt;
+    __asm__("lgdt %0" ::"m"(info));
 }
 
+void gdt_fill_entry(int index,bool exec,uint8_t privilage_level){
+    gdt[index].limit_0_15 = 0xFFF;
+    gdt[index].base_0_15 = 0x0000;
+    gdt[index].base16_23 = 0x00;
 
-void encoded_gdt_entry(uint8_t *target, struct GDTINPUT source){
+    gdt[index].accessed = 0;
+    gdt[index].r_w = 1;
+    gdt[index].executable = exec;
+    gdt[index].reserved = 1;
+    gdt[index].privilage_level = privilage_level;
+    gdt[index].present = 1;
+
+    gdt[index].limit_16_19 = 0xf;
+    gdt[index].reserved_2 = 0;
+    gdt[index].size = 1;
+    gdt[index].base24_31 = 0x00;
 
 }

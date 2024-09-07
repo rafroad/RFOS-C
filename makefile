@@ -9,7 +9,8 @@ all:
 	make kernelmain
 	make libc
 	make libhelp
-	~/opt/cross/bin/i686-elf-gcc -T boot/linker.ld -o build/RFOS.bin -ffreestanding -O2 -nostdlib build/boot.o build/kernel.o build/termfunc.o build/helper.o build/printf.o build/stdio.o build/abort.o build/memcmp.o build/memcpy.o build/memmove.o build/memset.o build/strlen.o build/strcpy.o -lgcc -I ./lib/libc/include -I ./lib/include
+	make coresys
+	~/opt/cross/bin/i686-elf-gcc -T boot/linker.ld -o build/RFOS.bin -ffreestanding -O2 -nostdlib build/*.o -lgcc -I ./lib/libc/include -I ./lib/include
 	cp build/RFOS.bin isodir/boot/RFOS.bin
 	cp boot/grub.cfg isodir/boot/grub/grub.cfg
 	~/opt/grub/bin/grub-mkrescue -o RFOS.iso isodir 
@@ -20,7 +21,8 @@ debug:
 	~/opt/cross/bin/i686-elf-gcc -c kernel/kernel.c -o build/kernel.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	make lib-debug
 	make libhel-debug
-	~/opt/cross/bin/i686-elf-gcc -T boot/linker.ld -o build/RFOS-debug.bin -ffreestanding -g -nostdlib build/boot.o build/kernel.o build/termfunc.o build/helper.o build/printf.o build/stdio.o build/abort.o build/memcmp.o build/memcpy.o build/memmove.o build/memset.o build/strlen.o build/strcpy.o -lgcc -I ./lib/libc/include -I ./lib/include
+	make coresys-debug
+	~/opt/cross/bin/i686-elf-gcc -T boot/linker.ld -o build/RFOS-debug.bin -ffreestanding -g -nostdlib build/*.o -lgcc -I ./lib/libc/include -I ./lib/include
 	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin
 
 libc:
@@ -61,7 +63,13 @@ kernelmain:
 	~/opt/cross/bin/i686-elf-gcc -c kernel/kernel.c -o build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
 coresys:
-	
+	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
+	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
+
+coresys-debug:
+	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
+	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
+
 
 clean:
 	rm -rf build/*.o
