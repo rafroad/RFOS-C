@@ -1,0 +1,8 @@
+*.o
+*.sym
+*.bin
+*.iso
+build/
+.vscode/
+extralib/
+crosscompiler/
