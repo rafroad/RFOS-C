@@ -18,4 +18,6 @@ void kernel_main(void){
     terminal_init();
     drawostitle();
     printf_(">");
+    refresh_ss();
+    printf_("reload success");
 }

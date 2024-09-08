@@ -37,3 +37,20 @@ void gdt_fill_entry(int index,bool exec,uint8_t privilage_level){
     gdt[index].base24_31 = 0x00;
 
 }
+
+void refresh_ss(void){
+    __asm__ (
+        "jmp 0xFFF\n"           
+        ".reload_CS:\n"
+        "mov $0x10, %%ax\n"     
+        "mov %%ax, %%ds\n"      
+        "mov %%ax, %%es\n"      
+        "mov %%ax, %%fs\n"     
+        "mov %%ax, %%gs\n"      
+        "mov %%ax, %%ss\n"    
+        "ret\n"                 
+        :                       
+        :                       
+        : "ax"                  
+    );
+}
