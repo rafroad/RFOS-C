@@ -5,7 +5,7 @@
 
 /*
 
-SPEC OS GDT CODE
+SpecOS GDT CODE
 
 */
 

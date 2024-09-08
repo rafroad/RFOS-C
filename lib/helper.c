@@ -6,7 +6,7 @@
 #include <termfunc.h>
 #include <string.h>
 #define OS "RFOS-V1.0-ALPHA"
-#define COPYRIGHTTEXT "COPYRIGHT RAFAN AHMAD THARIQ 2024"
+#define COPYRIGHTTEXT "COPYRIGHT Rafroad 2024"
 #define BORDER "="
 
 //MADE BY RAFROAD
@@ -76,7 +76,7 @@ void copyrighttextwitbox(){
    drawline(45);
    char copyright[100]="";
    copyrighttextlegacy(copyright,5,false,5);
-   printf_("%s",copyright); 
+   printf_("%s",copyright);
    drawline(45);
 }
 
@@ -134,4 +134,3 @@ void drawostitle(void){
    printf_("%s\n",OS);
    drawline(strlen(OS));
 }
-
