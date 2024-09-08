@@ -9,6 +9,9 @@ SpecOS GDT CODE
 
 */
 
+
+
+
 // Segment descriptor structure
 struct gdt_entry {
     uint16_t limit_low;     // The lower 16 bits of the limit

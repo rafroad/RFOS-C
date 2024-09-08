@@ -18,5 +18,4 @@ void kernel_main(void){
     terminal_init();
     drawostitle();
     printf_(">");
-    init_gdt();
 }
