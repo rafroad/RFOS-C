@@ -6,6 +6,8 @@
 #include <helper.h>
 #include "gdt.h"
 
+extern void load_cs();
+
 GDT_ENTRY gdt[GDT_SIZE];
 GDT_INFO info;
 
@@ -38,19 +40,15 @@ void gdt_fill_entry(int index,bool exec,uint8_t privilage_level){
 
 }
 
-void refresh_ss(void){
-    __asm__ (
-        "jmp 0xFFF\n"           
-        ".reload_CS:\n"
-        "mov $0x10, %%ax\n"     
-        "mov %%ax, %%ds\n"      
-        "mov %%ax, %%es\n"      
-        "mov %%ax, %%fs\n"     
-        "mov %%ax, %%gs\n"      
-        "mov %%ax, %%ss\n"    
-        "ret\n"                 
-        :                       
-        :                       
-        : "ax"                  
+__attribute__((naked))
+void refresh_ss() {
+    asm(
+        "pop %%edi; \n"
+        "call kernel_main;"
+        "push %%edi;"
+        "ret"
+        :
+        :
+        : "%edi"
     );
 }

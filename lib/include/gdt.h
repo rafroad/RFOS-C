@@ -43,7 +43,7 @@ typedef struct GDT_INFO
 
 
 
-void gdtinit(void);
+void gdt_init(void);
 void gdt_fill_entry(int index,bool exec,uint8_t privilage_level);
 void refresh_ss(void);
 

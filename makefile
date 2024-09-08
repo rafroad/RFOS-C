@@ -13,7 +13,7 @@ all:
 	~/opt/cross/bin/i686-elf-gcc -T boot/linker.ld -o build/RFOS.bin -ffreestanding -O2 -nostdlib build/*.o -lgcc -I ./lib/libc/include -I ./lib/include
 	cp build/RFOS.bin isodir/boot/RFOS.bin
 	cp boot/grub.cfg isodir/boot/grub/grub.cfg
-	~/opt/grub/bin/grub-mkrescue -o RFOS.iso isodir 
+	~/opt/grub/bin/grub-mkrescue -o RFOS.iso isodir
 	echo "run 'make run' to run qemu"
 debug:
 	make clean
@@ -23,12 +23,13 @@ debug:
 	make libhel-debug
 	make coresys-debug
 	~/opt/cross/bin/i686-elf-gcc -T boot/linker.ld -o build/RFOS-debug.bin -ffreestanding -g -nostdlib build/*.o -lgcc -I ./lib/libc/include -I ./lib/include
-	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin
+	echo "run 'make debugrun....' to run qemu "
+
 
 libc:
-	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdio/printf.c -o build/printf.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include 
+	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdio/printf.c -o build/printf.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdio/puts.c -o build/stdio.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
-	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdlib/abort.c -o build/abort.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include 
+	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdlib/abort.c -o build/abort.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/string/memcmp.c -o build/memcmp.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/string/memcpy.c -o build/memcpy.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/string/memmove.c -o build/memmove.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
@@ -37,9 +38,9 @@ libc:
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/string/strcpy.c -o build/strcpy.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
 lib-debug:
-	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdio/printf.c -o build/printf.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include 
+	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdio/printf.c -o build/printf.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdio/puts.c -o build/stdio.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
-	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdlib/abort.c -o build/abort.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include 
+	~/opt/cross/bin/i686-elf-gcc -c lib/libc/stdlib/abort.c -o build/abort.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/string/memcmp.c -o build/memcmp.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/string/memcpy.c -o build/memcpy.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/libc/string/memmove.c -o build/memmove.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
@@ -70,7 +71,6 @@ coresys-debug:
 	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
-
 clean:
 	rm -rf build/*.o
 	rm -rf build/*.bin
@@ -79,6 +79,13 @@ clean:
 cleaniso:
 	rm -rf *.iso
 
-
 run:
 	qemu-system-i386 -cdrom RFOS.iso
+
+rundebug:
+	make debug
+	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio
+
+rundebugnogdb:
+	make debug
+	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio
