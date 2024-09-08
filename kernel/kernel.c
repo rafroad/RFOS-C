@@ -14,10 +14,9 @@
 
 
 void kernel_main(void){
-    gdt_init();
+    init_gdt();
     terminal_init();
     drawostitle();
     printf_(">");
-    refresh_ss();
-    printf_("reload success");
+    init_gdt();
 }
