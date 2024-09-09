@@ -6,6 +6,7 @@
 #include <termfunc.h>
 #include <string.h>
 #include <gdt.h>
+#include <idt.h>
 #define OSVER "RFOS-V1.0-TEST"
 
 #if defined(__linux__)
