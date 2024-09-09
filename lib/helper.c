@@ -6,10 +6,29 @@
 #include <termfunc.h>
 #include <string.h>
 #define OS "RFOS-V1.0-ALPHA"
+#define KERNELVER "KERNEL VERSION 1.0-A"
 #define COPYRIGHTTEXT "COPYRIGHT Rafroad 2024"
 #define BORDER "="
 
 //MADE BY RAFROAD
+
+char stringlong(char string1[],char string2[]){
+    if(strlen(string1)>strlen(string2)){
+        return string1[];
+    }
+    else{
+        return string2[];
+    }
+}
+
+char stringlongstrlen(char string1[],char string2[]){
+    if(strlen(string1)>strlen(string2)){
+        return strlen(string1);
+    }
+    else{
+        return strlen(string2);
+    }
+}
 
 void drawmultext(char input[][1000], int x){
     for(int i=0; i<x; i++){
@@ -132,5 +151,6 @@ void drawmultextnum(char input1[][1000], int x){
 
 void drawostitle(void){
    printf_("%s\n",OS);
-   drawline(strlen(OS));
+   printf("%s\n",KERNELVER);
+   drawline(stringlongstrlen(OS, KERNELVER));
 }
