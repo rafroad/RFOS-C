@@ -13,4 +13,4 @@ These instructions assume you are using a linux or unixlike operating system
 3. unpack the grub tar in package/ and compile then install into $HOME/opt/grub
 4. get nasm from source and compile then install into $HOME/opt/nasm
 5. get qemu from your distro package manager
-6. run 'make allrun' to compile with -O2 then run qemu or run 'make debug' to compile -g
+6. run 'make allrun' to compile with -O2 then run qemu or run 'make debug' to compile with -g or run 'make debugrun' to run with gdb support or run 'debugrunnogdb' to run with qemu serial monitor
