@@ -6,7 +6,7 @@ current list of things to work on:
 4. Basic shell
 5. All of the old RF OS in CosmosOS
 
-##COMPILE STEP
+## COMPILE STEP
 These instructions assume you are using a linux or unixlike operating system
 1. follow the https://wiki.osdev.org/GCC_Cross-Compiler to get a cross compiler using GCC version 13.2.0 GDB version 14.1 and Binutils version 2.41
 2. install the cross compile to $HOME/opt/cross
