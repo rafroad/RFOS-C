@@ -9,7 +9,7 @@ current list of things to work on:
 ## COMPILE STEP
 These instructions assume you are using a linux or unixlike operating system
 1. follow the https://wiki.osdev.org/GCC_Cross-Compiler to get a cross compiler using GCC version 13.2.0 GDB version 14.1 and Binutils version 2.41
-2. install the cross compile to $HOME/opt/cross
+2. install the cross compiler to $HOME/opt/cross
 3. unpack the grub tar in package/ and compile then install into $HOME/opt/grub
 4. get nasm from source and compile then install into $HOME/opt/nasm
 5. get qemu from your distro package manager
