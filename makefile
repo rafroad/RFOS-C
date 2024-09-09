@@ -64,12 +64,10 @@ kernelmain:
 	~/opt/cross/bin/i686-elf-gcc -c kernel/kernel.c -o build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
 coresys:
-	 nasm lib/idt.s -o build/idt-s.o
 	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
 coresys-debug:
-	 nasm lib/idt.s -o build/idt-s.o
 	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
