@@ -16,6 +16,7 @@
 
 void kernel_main(void){
     init_gdt();
+    idt_init();
     terminal_init();
     drawostitle();
     printf_(">");

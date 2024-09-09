@@ -64,10 +64,14 @@ kernelmain:
 	~/opt/cross/bin/i686-elf-gcc -c kernel/kernel.c -o build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
 coresys:
+	~/opt/nasm/bin/nasm -felf32 lib/isr.s -o build/isr-s.o
+	~/opt/cross/bin/i686-elf-gcc -c lib/isr.c -o build/isr.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
 coresys-debug:
+	~/opt/nasm/bin/nasm -felf32 lib/isr.s -o build/isr-s.o
+	~/opt/cross/bin/i686-elf-gcc -c lib/isr.c -o build/isr.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./lib/libc/include -I ./lib/include
 
