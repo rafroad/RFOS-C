@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-
+void init_kb(void);
 
 #ifdef __cplusplus
 }

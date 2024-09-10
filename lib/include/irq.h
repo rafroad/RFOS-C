@@ -4,22 +4,18 @@
 #include <printf.h>
 #include <string.h>
 #include <helper.h>
-#include <irq.h>
 
-#define OSVER "RFOS-V1.0-TEST"
 
-#if defined(__linux__)
-#error "You are not using a cross-compiler use it"
-#endif
-
-#ifndef _KERNEL_H_
-#define _KERNEL_H_
+#ifndef _IRQ_H_
+#define _IRQ_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void kernel_main(void);
+void outportb(unsigned int port,unsigned char value);
+unsigned char inportb(unsigned int port);
+void stopit(void);
 
 #ifdef __cplusplus
 }

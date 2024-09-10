@@ -1,9 +1,9 @@
 .PHONY: all main libc boot
 CC = ~/opt/cross/bin/i686-elf-gcc
-CFLAGSREL = -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-CFGLAGDEB =	-std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+CFLAGSREL = -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I libc/include -I lib/include -I drivers/include -I kernel/include
+CFLAGSDEB =	-std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
 ASMB = ~/opt/nasm/bin/nasm
-LFREL = -ffreestanding -O2 -nostdlib build/*.o -lgcc -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+LFREL = -ffreestanding -O2 -nostdlib build/*.o -lgcc -I libc/include -I lib/include -I drivers/include -I kernel/include
 LFDEB = -ffreestanding -g -nostdlib build/*.o -lgcc -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
 
 allrun:
@@ -13,15 +13,15 @@ allrun:
 all:
 	make clean
 	make boot
-	make kernelmain
+	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
 	make libc-rel
 	make libhelp
 	make coresys
 	$(CC) -T boot/linker.ld -o build/RFOS.bin $(LFREL)
-	 cp build/RFOS.bin isodir/boot/RFOS.bin
-	 cp build/RFOS.bin isodir/boot/RFOS.bin
-	 cp boot/grub.cfg isodir/boot/grub/grub.cfg
-	 ~/opt/grub/bin/grub-mkrescue -o RFOS.iso isodir
+	cp build/RFOS.bin isodir/boot/RFOS.bin
+	cp build/RFOS.bin isodir/boot/RFOS.bin
+	cp boot/grub.cfg isodir/boot/grub/grub.cfg
+	~/opt/grub/bin/grub-mkrescue -o RFOS.iso isodir
 	#run 'make run' to run qemu
 
 debug:
@@ -67,21 +67,20 @@ libhelp-debug:
 	$(CC) -c lib/termfunc.c -o build/termfunc.o $(CFLAGSDEB)
 	$(CC) -c lib/helper.c -o build/helper.o $(CFLAGSDEB)
 
-
-kernelmain:
-	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
-
 coresys:
 	$(ASMB) -felf32 lib/isr.s -o build/isrs.o
 	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSREL)
 	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSREL)
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSREL)
+	$(CC) -c lib/irq.c -o build/irq.o $(CFLAGSREL)
+
 
 coresys-debug:
 	$(ASMB) -felf32 lib/isr.s -o build/isrs.o
 	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSDEB)
 	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSDEB)
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSDEB)
+	$(CC) -c lib/irq.c -o build/irq.o $(CFLAGSDEB)
 
 clean:
 	rm -rf build/*.o
