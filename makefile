@@ -1,4 +1,10 @@
-.PHONY: all main
+.PHONY: all main libc boot
+CC = ~/opt/cross/bin/i686-elf-gcc
+CFLAGSREL = -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+CFGLAGDEB =	-std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+ASMB = ~/opt/nasm/bin/nasm
+LFREL = -ffreestanding -O2 -nostdlib build/*.o -lgcc -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+LFDEB = -ffreestanding -g -nostdlib build/*.o -lgcc -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
 
 allrun:
 	make all
@@ -6,76 +12,76 @@ allrun:
 
 all:
 	make clean
+	make boot
 	make kernelmain
 	make libc-rel
 	make libhelp
 	make coresys
-	 ~/opt/cross/bin/i686-elf-gcc -T boot/linker.ld -o build/RFOS.bin -ffreestanding -O2 -nostdlib build/*.o -lgcc -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+	$(CC) -T boot/linker.ld -o build/RFOS.bin $(LFREL)
 	 cp build/RFOS.bin isodir/boot/RFOS.bin
 	 cp build/RFOS.bin isodir/boot/RFOS.bin
 	 cp boot/grub.cfg isodir/boot/grub/grub.cfg
 	 ~/opt/grub/bin/grub-mkrescue -o RFOS.iso isodir
-	# echo "run 'make run' to run qemu"
+	#run 'make run' to run qemu
 
 debug:
 	make clean
-	~/opt/cross/bin/i686-elf-as boot/boot.s -o build/boot.o
-	~/opt/cross/bin/i686-elf-gcc -c kernel/kernel.c -o build/kernel.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+	make boot
+	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSDEB)
 	make libc-debug
 	make libhelp-debug
 	make coresys-debug
-	~/opt/cross/bin/i686-elf-gcc -T boot/linker.ld -o build/RFOS-debug.bin -ffreestanding -g -nostdlib build/*.o -lgcc -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	echo "run 'make debugrun....' to run qemu "
+	$(CC) -T boot/linker.ld -o build/RFOS-debug.bin $(LFDEB)
+	#run 'make debugrun....' to run qemu
 
+boot:
+	~/opt/cross/bin/i686-elf-as boot/boot.s -o build/boot.o
 
 libc-rel:
-	~/opt/cross/bin/i686-elf-gcc -c libc/stdio/printf.c -o build/printf.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/stdio/puts.c -o build/stdio.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/stdlib/abort.c -o build/abort.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/memcmp.c -o build/memcmp.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/memcpy.c -o build/memcpy.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/memmove.c -o build/memmove.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/memset.c -o build/memset.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/strlen.c -o build/strlen.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/strcpy.c -o build/strcpy.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+	$(CC) -c libc/stdio/printf.c -o build/printf.o $(CFLAGSREL)
+	$(CC) -c libc/stdio/puts.c -o build/stdio.o $(CFLAGSREL)
+	$(CC) -c libc/stdlib/abort.c -o build/abort.o $(CFLAGSREL)
+	$(CC) -c libc/string/memcmp.c -o build/memcmp.o $(CFLAGSREL)
+	$(CC) -c libc/string/memcpy.c -o build/memcpy.o $(CFLAGSREL)
+	$(CC) -c libc/string/memmove.c -o build/memmove.o $(CFLAGSREL)
+	$(CC) -c libc/string/memset.c -o build/memset.o $(CFLAGSREL)
+	$(CC) -c libc/string/strlen.c -o build/strlen.o $(CFLAGSREL)
+	$(CC) -c libc/string/strcpy.c -o build/strcpy.o $(CFLAGSREL)
 
 libc-debug:
-	~/opt/cross/bin/i686-elf-gcc -c libc/stdio/printf.c -o build/printf.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/stdio/puts.c -o build/stdio.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/stdlib/abort.c -o build/abort.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/memcmp.c -o build/memcmp.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/memcpy.c -o build/memcpy.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/memmove.c -o build/memmove.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/memset.c -o build/memset.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/strlen.c -o build/strlen.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c libc/string/strcpy.c -o build/strcpy.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-
-
+	$(CC) -c libc/stdio/printf.c -o build/printf.o $(CFLAGSDEB)
+	$(CC) -c libc/stdio/puts.c -o build/stdio.o $(CFLAGSDEB)
+	$(CC) -c libc/stdlib/abort.c -o build/abort.o $(CFLAGSDEB)
+	$(CC) -c libc/string/memcmp.c -o build/memcmp.o $(CFLAGSDEB)
+	$(CC) -c libc/string/memcpy.c -o build/memcpy.o $(CFLAGSDEB)
+	$(CC) -c libc/string/memmove.c -o build/memmove.o $(CFLAGSDEB)
+	$(CC) -c libc/string/memset.c -o build/memset.o $(CFLAGSDEB)
+	$(CC) -c libc/string/strlen.c -o build/strlen.o $(CFLAGSDEB)
+	$(CC) -c libc/string/strcpy.c -o build/strcpy.o $(CFLAGSDEB)
 
 libhelp:
-	~/opt/cross/bin/i686-elf-gcc -c lib/termfunc.c -o build/termfunc.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c lib/helper.c -o build/helper.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+	$(CC) -c lib/termfunc.c -o build/termfunc.o $(CFLAGSREL)
+	$(CC) -c lib/helper.c -o build/helper.o $(CFLAGSREL)
 
 libhelp-debug:
-	~/opt/cross/bin/i686-elf-gcc -c lib/termfunc.c -o build/termfunc.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c lib/helper.c -o build/helper.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+	$(CC) -c lib/termfunc.c -o build/termfunc.o $(CFLAGSDEB)
+	$(CC) -c lib/helper.c -o build/helper.o $(CFLAGSDEB)
 
 
 kernelmain:
-	~/opt/cross/bin/i686-elf-as boot/boot.s -o build/boot.o
-	~/opt/cross/bin/i686-elf-gcc -c kernel/kernel.c -o build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
 
 coresys:
-	~/opt/nasm/bin/nasm -felf32 lib/isr.s -o build/isr-s.o
-	~/opt/cross/bin/i686-elf-gcc -c lib/isr.c -o build/isr.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+	$(ASMB) -felf32 lib/isr.s -o build/isrs.o
+	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSREL)
+	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSREL)
+	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSREL)
 
 coresys-debug:
-	~/opt/nasm/bin/nasm -felf32 lib/isr.s -o build/isr-s.o
-	~/opt/cross/bin/i686-elf-gcc -c lib/isr.c -o build/isr.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c lib/idt.c -o build/idt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
-	~/opt/cross/bin/i686-elf-gcc -c lib/gdt.c -o build/gdt.o -std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+	$(ASMB) -felf32 lib/isr.s -o build/isrs.o
+	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSDEB)
+	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSDEB)
+	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSDEB)
 
 clean:
 	rm -rf build/*.o

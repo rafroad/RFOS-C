@@ -12,15 +12,6 @@
 
 //MADE BY RAFROAD
 
-char stringlong(char string1[],char string2[]){
-    if(strlen(string1)>strlen(string2)){
-        return string1[];
-    }
-    else{
-        return string2[];
-    }
-}
-
 char stringlongstrlen(char string1[],char string2[]){
     if(strlen(string1)>strlen(string2)){
         return strlen(string1);
