@@ -9,13 +9,7 @@
 #include <gdt.h>
 #include <idt.h>
 #include <irq.h>
-
-void testwrite(){
-    stopit();
-    outportb(0x60, 0x10);
-    printf_("success writing to port 0x60 value 0x10\n");
-    printf_("test read for 0x60: %i\n",inportb(0x60));
-}
+#include <pic.h>
 
 
 void kernel_main(void){
@@ -23,5 +17,5 @@ void kernel_main(void){
     idt_init();
     terminal_init();
     drawostitle();
-    testwrite();
+    init_kb();
 }

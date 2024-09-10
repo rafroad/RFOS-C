@@ -17,6 +17,7 @@ all:
 	make libc-rel
 	make libhelp
 	make coresys
+	make driver-rel
 	$(CC) -T boot/linker.ld -o build/RFOS.bin $(LFREL)
 	cp build/RFOS.bin isodir/boot/RFOS.bin
 	cp build/RFOS.bin isodir/boot/RFOS.bin
@@ -31,6 +32,7 @@ debug:
 	make libc-debug
 	make libhelp-debug
 	make coresys-debug
+	make driver-deb
 	$(CC) -T boot/linker.ld -o build/RFOS-debug.bin $(LFDEB)
 	#run 'make debugrun....' to run qemu
 
@@ -73,6 +75,7 @@ coresys:
 	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSREL)
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSREL)
 	$(CC) -c lib/irq.c -o build/irq.o $(CFLAGSREL)
+	$(CC) -c lib/pic.c -o build/pic.o $(CFLAGSREL)
 
 
 coresys-debug:
@@ -81,6 +84,13 @@ coresys-debug:
 	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSDEB)
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSDEB)
 	$(CC) -c lib/irq.c -o build/irq.o $(CFLAGSDEB)
+	$(CC) -c lib/pic.c -o build/pic.o $(CFLAGSDEB)
+
+driver-rel:
+	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSREL)
+
+driver-deb:
+	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSDEB)
 
 clean:
 	rm -rf build/*.o
