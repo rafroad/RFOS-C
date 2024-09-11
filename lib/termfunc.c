@@ -43,7 +43,7 @@ void termscroll(int line){
 void putentryat(unsigned char c,uint8_t color,size_t x,size_t y){
     const size_t index=y*VGA_WIDTH+x;
     if(c=='\n'){
-        c=0x00; 
+        c=0x00;
     }
     else if(c=='\t'){
         c=0x00;
@@ -59,6 +59,26 @@ void putentryat(unsigned char c,uint8_t color,size_t x,size_t y){
     }
     terminal_buffer[index]=vga_entry(c,color);
 }
+
+void putcharkb(char c){
+    unsigned char uc=c;
+    putentryat(uc,terminal_color,terminal_column,terminal_row);
+    if(++terminal_column==VGA_WIDTH){
+        terminal_column=0;
+        if(++terminal_row==VGA_HEIGHT){
+            termdellastline();
+            termscroll(1);
+            terminal_column=VGA_HEIGHT-1;
+        }
+    }
+    if(terminal_row == VGA_HEIGHT){
+        termscroll(1);
+        termdellastline();
+        terminal_row=VGA_HEIGHT-1;
+    }
+
+}
+
 
 void putcharus(char c){
     unsigned char uc=c;
@@ -89,7 +109,7 @@ void putcharus(char c){
             termscroll(1);
             termdellastline();
             terminal_row=VGA_HEIGHT-1;
-        }     
+        }
     }
 
 
@@ -118,4 +138,11 @@ void termdellastline(void){
 
 size_t printcentre(void){
     terminal_column=VGA_WIDTH/2;
+}
+
+void termclear(){
+    for(uint16_t i=-1;i<=terminal_buffer;i++){
+        terminal_buffer[i]=0x00;
+        terminal_buffer=0;
+    }
 }

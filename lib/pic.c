@@ -2,6 +2,7 @@
 #include <printf.h>
 #include "pic.h"
 #include <stdint.h>
+#include <idt.h>
 
 #define PIC1		0x20		/* IO base address for master PIC */
 #define PIC2		0xA0		/* IO base address for slave PIC */
@@ -24,26 +25,17 @@ void pic_test(){
 void setup_pic() {
     outportb(PIC1_COMMAND, 0x11);
     outportb(PIC2_COMMAND, 0x11);
-    stopit();
-    outportb(PIC1_COMMAND, 0x20);
-    outportb(PIC2_COMMAND, 0x28);
-    stopit();
-    outportb(PIC1_DATA, 0x4);
-    outportb(PIC2_DATA, 0x2);
-    stopit();
-    outportb(PIC1_DATA, 0x1);
-    outportb(PIC2_DATA, 0x1);
-    stopit();
-    outportb(PIC1_DATA, 0x0);
-    outportb(PIC2_DATA, 0x0);
-    stopit();
+    outportb(PIC1_DATA, 0x20);
+    outportb(PIC2_DATA, 0x28);
+    outportb(PIC1_DATA, 0x04);
+    outportb(PIC2_DATA, 0x02);
+    outportb(PIC1_DATA, 0x01);
+    outportb(PIC2_DATA, 0x01);
+    outportb(0x21 , 0xff);
+    outportb(0xA1 , 0xff);
 }
 
-void receive_inter(unsigned char inter){
-
-}
-
-void PIC_sendEOI(uint8_t irq)
+void pic_send_eoi(uint8_t irq)
 {
 	if(irq >= 8)
 		outportb(PIC2_COMMAND,PIC_EOI);

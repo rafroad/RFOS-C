@@ -19,7 +19,7 @@ void terminal_setcolor(uint8_t color);
 void termdellastline(void);
 void termscroll(int line);
 size_t printcentre(void);
-
+void termclear();
 
 #ifdef __cplusplus
 }

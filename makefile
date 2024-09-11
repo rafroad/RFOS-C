@@ -13,7 +13,7 @@ allrun:
 all:
 	make clean
 	make boot
-	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
+	make kernel-rel
 	make libc-rel
 	make libhelp
 	make coresys
@@ -91,6 +91,14 @@ driver-rel:
 
 driver-deb:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSDEB)
+
+kernel-rel:
+	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
+	$(CC) -c kernel/shell.c -o build/shell.o $(CFLAGSREL)
+
+kernel-deb5:
+	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSDEB)
+	$(CC) -c kernel/shell.c -o build/shell.o $(CFLAGSDEB)
 
 clean:
 	rm -rf build/*.o

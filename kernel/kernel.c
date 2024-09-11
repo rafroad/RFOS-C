@@ -10,12 +10,16 @@
 #include <idt.h>
 #include <irq.h>
 #include <pic.h>
-
+#include <shell.h>
 
 void kernel_main(void){
     init_gdt();
+    setup_pic();
     idt_init();
     terminal_init();
     drawostitle();
     init_kb();
+    while(true){
+        keyboard_handler();
+    }
 }

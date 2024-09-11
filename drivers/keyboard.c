@@ -3,57 +3,70 @@
 #include <stdbool.h>
 #include <irq.h>
 #include <stdio.h>
+#include <string.h>
 #include <termfunc.h>
 #define DATA_PORT 0x60
+#define SIGNAL_PORT 0x64
 
 
 uint8_t lastkey = 0;
 uint8_t *keycache = 0;
 uint16_t key_loc = 0;
 uint8_t __kbd_enabled = 0;
+char characterTable[] = {
+    0,    27,   '1',  '2',  '3',  '4',  '5',  '6',  '7',  '8',  '9',  '0',
+    '-',  '=',  0,    9,    'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',
+    'o',  'p',  '[',  ']',  0,    0,    'a',  's',  'd',  'f',  'g',  'h',
+    'j',  'k',  'l',  ';',  '\'', '`',  0,    '\\', 'z',  'x',  'c',  'v',
+    'b',  'n',  'm',  ',',  '.',  '/',  0,    '*',  0,    ' ',  0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0x1B, 0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0x0E, 0x1C, 0,    0,    0,
+    0,    0,    0,    0,    0,    '/',  0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0,
+    0,    0,    0,    0,    0,    0,    0,    0x2C,
+};
+char shiftedCharacterTable[] = {
+    0,    27,   '!',  '@',  '#',  '$',  '%',  '^',  '&',  '*',  '(',  ')',
+    '_',  '+',  0,    9,    'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
+    'O',  'P',  '{',  '}',  0,    0,    'A',  'S',  'D',  'F',  'G',  'H',
+    'J',  'K',  'L',  ':',  '"',  '~',  0,    '|',  'Z',  'X',  'C',  'V',
+    'B',  'N',  'M',  '<',  '>',  '?',  0,    '*',  0,    ' ',  0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0x1B, 0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0x0E, 0x1C, 0,    0,    0,
+    0,    0,    0,    0,    0,    '?',  0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0,
+    0,    0,    0,    0,    0,    0,    0,    0x2C,
+};
+void init_kb_fallback(void){
 
-void init_kb(void){
-    char keypressed[1000]="";
-    int i=0;
     stopit();
     outportb(DATA_PORT, 0xF4);
     if(inportb(DATA_PORT) != 0xFA){
         printf_("fail to init keyboard");
     }
     while (true) {
-        if(inportb(0x60)!= 0xFA){
+        if(inportb(DATA_PORT)!= 0xFE){
             char key=inportb(0x60);
-            putcharus(key);
-            outportb(DATA_PORT, 0xF4);
+            putcharkb(characterTable[key]);
+            outportb(DATA_PORT, 'A');
         }
     }
 }
 
-int returnkey(char keycode){
-    char alphabet[][100]={"a","b","c","d","e","f","g","h","i","j","k","l","m","n",
-        "o","p","q","r","s","t","u","v","w","x","y","z"};
+void init_kb(void){
+    unsigned char curmask_master = inportb(0x21);
+    stopit();
+    outportb(0x21, curmask_master & 0xFD);
+
 }
+void keyboard_handler(void){
 
-void testps2(){
-    printf_("0x60: %x\n",inportb(0x60));
-    printf_("0x68: %x\n",inportb(0x68));
-    stopit();
-    outportb(0x60, 0xF2);
-    printf_("success writing to port 0x60 value 0xF2\n");
-    printf_("0x60: %x\n",inportb(0x60));
-    printf_("0x68: %x\n",inportb(0x68));
-    stopit();
-    outportb(0x60, 0xF0);
-    printf_("success writing to port 0x60 value 0xF0\n");
-    printf_("0x60: %x\n",inportb(0x60));
-    stopit();
-    outportb(0x60, 0);
-    printf_("success writing to port 0x60 value 0\n");
-    printf_("0x60: %x\n",inportb(0x60));
-    stopit();
-    outportb(0x60, 0xF4);
-    printf_("success writing to port 0x60 value 0xF4\n");
-    printf_("0x60: %x\n",inportb(0x60));
-    printf_("0x68: %x\n",inportb(0x68));
+    unsigned char key= inportb(0x60);
 
+    putcharus(characterTable[key]);
+    pic_send_eoi(1);
 }

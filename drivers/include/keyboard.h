@@ -12,8 +12,9 @@
 extern "C" {
 #endif
 
-void init_kb(void);
-void testps2();
+void init_kb();
+void init_kb_fallback(void);
+void keyboard_handler(void);
 
 #ifdef __cplusplus
 }
