@@ -12,8 +12,9 @@
 extern "C" {
 #endif
 
-void setup_pic();
+void pic_init();
 void pic_send_eoi(uint8_t irq);
+void pic_1_send_eoi();
 
 #ifdef __cplusplus
 }

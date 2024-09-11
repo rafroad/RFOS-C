@@ -14,12 +14,10 @@
 
 void kernel_main(void){
     init_gdt();
-    setup_pic();
     idt_init();
+    pic_init();
     terminal_init();
     drawostitle();
     init_kb();
-    while(true){
-        keyboard_handler();
-    }
+    keyboard_handler();
 }

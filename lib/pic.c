@@ -1,6 +1,7 @@
 #include <irq.h>
 #include <printf.h>
 #include "pic.h"
+#include "include/pic.h"
 #include <stdint.h>
 #include <idt.h>
 
@@ -22,7 +23,7 @@ void pic_test(){
 
 }
 
-void setup_pic() {
+void pic_init() {
     outportb(PIC1_COMMAND, 0x11);
     outportb(PIC2_COMMAND, 0x11);
     outportb(PIC1_DATA, 0x20);
@@ -33,6 +34,8 @@ void setup_pic() {
     outportb(PIC2_DATA, 0x01);
     outportb(0x21 , 0xff);
     outportb(0xA1 , 0xff);
+    asm("sti");
+    // asm("ret");
 }
 
 void pic_send_eoi(uint8_t irq)
@@ -41,4 +44,8 @@ void pic_send_eoi(uint8_t irq)
 		outportb(PIC2_COMMAND,PIC_EOI);
 
 	outportb(PIC1_COMMAND,PIC_EOI);
+}
+
+void pic_1_send_eoi(){
+   	outportb(PIC1_COMMAND,PIC_EOI);
 }

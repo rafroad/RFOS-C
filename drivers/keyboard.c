@@ -65,8 +65,16 @@ void init_kb(void){
 }
 void keyboard_handler(void){
 
+    unsigned char out;
     unsigned char key= inportb(0x60);
-
-    putcharus(characterTable[key]);
-    pic_send_eoi(1);
+    bool pressed = true;
+    if(pressed){
+        out=characterTable[key];
+        pressed=false;
+        putcharus(out);
+        pic_1_send_eoi();
+    }
+    else{
+        putchar_("");
+    }
 }
