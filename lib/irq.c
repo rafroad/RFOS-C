@@ -24,8 +24,3 @@ void outportb(unsigned int port,unsigned char value){
 void stopit(void){
     asm("cli");
 }
-
-void interrupt_handler(void)
-{
-    printf_("interupt detected");
-}

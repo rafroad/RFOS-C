@@ -13,10 +13,15 @@
 #include <shell.h>
 
 void kernel_main(void){
+    int i=0;
     init_gdt();
     idt_init();
     pic_init();
     terminal_init();
     drawostitle();
-    init_kb();
+    // init_kb();
+    while(true){
+        printf_("%i",i);
+        i++;
+    }
 }

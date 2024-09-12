@@ -24,7 +24,7 @@ void pic_init() {
     outportb(PIC2_DATA, 0x02);
     outportb(PIC1_DATA, 0x01);
     outportb(PIC2_DATA, 0x01);
-    outportb(0x21 , 0xff);
+    outportb(0x21 , 0xfd);
     outportb(0xA1 , 0xff);
     asm("sti");
     // asm("ret");
