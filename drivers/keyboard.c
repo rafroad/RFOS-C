@@ -58,23 +58,14 @@ void init_kb_fallback(void){
 }
 
 void init_kb(void){
-    unsigned char curmask_master = inportb(0x21);
+    void* interupt_handler;
+    idt_set_descriptor(33, interupt_handler, 0x21);
+    asm("int $0x33");
     stopit();
-    outportb(0x21, curmask_master & 0xFD);
-
-}
-void keyboard_handler(void){
-
-    unsigned char out;
-    unsigned char key= inportb(0x60);
-    bool pressed = true;
-    if(pressed){
-        out=characterTable[key];
-        pressed=false;
-        putcharus(out);
-        pic_1_send_eoi();
+    outportb(DATA_PORT, 0xF4);
+    if(inportb(DATA_PORT) != 0xFA){
+        printf_("fail to init keyboard");
     }
-    else{
-        putchar_("");
-    }
+    char key=inportb(0x60);
+    putcharkb(characterTable[key]);
 }

@@ -19,5 +19,4 @@ void kernel_main(void){
     terminal_init();
     drawostitle();
     init_kb();
-    keyboard_handler();
 }

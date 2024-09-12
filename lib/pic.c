@@ -13,15 +13,7 @@
 #define PIC2_DATA	(PIC2+1)
 #define PIC_EOI		0x20
 
-void pic_test(){
-    printf_("%u\n",inportb(PIC1_COMMAND));
-    printf_("%u\n",inportb(PIC1_DATA));
-    printf_("%u\n",inportb(PIC2_COMMAND));
-    printf_("%u\n",inportb(PIC2_DATA));
-    printf_("sending command to %i\n",PIC1_COMMAND);
 
-
-}
 
 void pic_init() {
     outportb(PIC1_COMMAND, 0x11);

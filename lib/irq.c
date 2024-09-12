@@ -25,10 +25,7 @@ void stopit(void){
     asm("cli");
 }
 
-uint32_t interrupt_handler(struct cpu_state cpu, uint32_t interrupt_number, uint32_t error_code, uint32_t eip) {
-    switch(interrupt_number) {
-        case(INT_KEYBOARD):
-            keyboard_handler();
-            break;
-    }
+void interrupt_handler(void)
+{
+    printf_("interupt detected");
 }
