@@ -15,7 +15,7 @@ extern "C" {
 void init_kb();
 void init_kb_fallback(void);
 void keyboard_handler(void*);
-
+bool check_rel_key(char c, char list[], int listSize);
 #ifdef __cplusplus
 }
 #endif

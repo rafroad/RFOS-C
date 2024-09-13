@@ -92,8 +92,7 @@ void putcharus(char c){
         }
     }
     else if(c=='\n'){
-        terminal_column=0;
-        terminal_row++;
+        terminal_newline();
     }
     else if(c=='\t'){
         for(int i=0;i<3;i++){
@@ -134,6 +133,15 @@ void termdellastline(void){
     for(int i=0;i<VGA_WIDTH-1;i++){
         putentryat(' ',terminal_color,i,VGA_HEIGHT-1);
     }
+}
+void termdellastchar(void){
+    terminal_column--;
+    putcharus(0x00);
+    terminal_buffer--;
+}
+void terminal_newline(){
+    terminal_column=0;
+    terminal_row++;
 }
 
 size_t printcentre(void){

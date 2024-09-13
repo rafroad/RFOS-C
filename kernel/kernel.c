@@ -19,6 +19,7 @@ void kernel_main(void){
     pic_init();
     terminal_init();
     drawostitle();
+    printf_(">");
     for(;;){
         asm("hlt");
     }

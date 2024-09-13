@@ -20,6 +20,8 @@ void termdellastline(void);
 void termscroll(int line);
 size_t printcentre(void);
 void termclear();
+void termdellastchar(void);
+void terminal_newline();
 
 #ifdef __cplusplus
 }

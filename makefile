@@ -115,8 +115,8 @@ run:
 
 debugrun:
 	make debug
-	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio -d int
+	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio
 
 debugrunnogdb:
 	make debug
-	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio -d int
+	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio
