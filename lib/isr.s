@@ -10,7 +10,14 @@ isr_stub_%+%1:
     iret
 %endmacro
 
+%macro kb_handler 1
+kb_handler_%+%1:
+    call keyboard_handler
+    iret
+%endmacro
+
 extern exception_handler
+extern keyboard_handler
 isr_no_err_stub 0
 isr_no_err_stub 1
 isr_no_err_stub 2
@@ -43,12 +50,13 @@ isr_no_err_stub 28
 isr_no_err_stub 29
 isr_err_stub    30
 isr_no_err_stub 31
-
+kb_handler 1
 
 global isr_stub_table
 isr_stub_table:
 %assign i 0
 %rep    32
     dd isr_stub_%+i ; use DQ instead if targeting 64-bit
+    dd kb_handler_1
 %assign i i+1
 %endrep

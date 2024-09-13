@@ -13,8 +13,8 @@
 extern "C" {
 #endif
 
-__attribute__((noreturn))
-void exception_handler(void);
+__attribute__((interrupt))
+void exception_handler(void*);
 
 
 

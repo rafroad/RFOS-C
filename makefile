@@ -5,6 +5,8 @@ CFLAGSDEB =	-std=gnu99 -ffreestanding -g -Wall -Wextra -I ./libc/include -I ./li
 ASMB = ~/opt/nasm/bin/nasm
 LFREL = -ffreestanding -O2 -nostdlib build/*.o -lgcc -I libc/include -I lib/include -I drivers/include -I kernel/include
 LFDEB = -ffreestanding -g -nostdlib build/*.o -lgcc -I ./libc/include -I ./lib/include -I ./drivers/include -I ./kernel/include
+CFLAGSINTREL = -std=gnu99 -mgeneral-regs-only -ffreestanding -O2 -Wall -Wextra -I libc/include -I lib/include -I drivers/include -I kernel/include
+CFLAGSINTDEB = -std=gnu99 -mgeneral-regs-only -ffreestanding -g -Wall -Wextra -I libc/include -I lib/include -I drivers/include -I kernel/include
 
 allrun:
 	make all
@@ -71,7 +73,7 @@ libhelp-debug:
 
 coresys:
 	$(ASMB) -felf32 lib/isr.s -o build/isrs.o
-	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSREL)
+	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSINTREL)
 	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSREL)
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSREL)
 	$(CC) -c lib/irq.c -o build/irq.o $(CFLAGSREL)
@@ -80,17 +82,17 @@ coresys:
 
 coresys-debug:
 	$(ASMB) -felf32 lib/isr.s -o build/isrs.o
-	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSDEB)
+	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSINTDEB)
 	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSDEB)
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSDEB)
 	$(CC) -c lib/irq.c -o build/irq.o $(CFLAGSDEB)
 	$(CC) -c lib/pic.c -o build/pic.o $(CFLAGSDEB)
 
 driver-rel:
-	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSREL)
+	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTREL)
 
 driver-deb:
-	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSDEB)
+	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTDEB)
 
 kernel-rel:
 	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
@@ -113,8 +115,8 @@ run:
 
 debugrun:
 	make debug
-	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio
+	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio -d int
 
 debugrunnogdb:
 	make debug
-	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio
+	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio -d int

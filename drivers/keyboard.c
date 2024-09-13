@@ -8,11 +8,8 @@
 #define DATA_PORT 0x60
 #define SIGNAL_PORT 0x64
 
+bool inscanf=false;
 
-uint8_t lastkey = 0;
-uint8_t *keycache = 0;
-uint16_t key_loc = 0;
-uint8_t __kbd_enabled = 0;
 char characterTable[] = {
     0,    27,   '1',  '2',  '3',  '4',  '5',  '6',  '7',  '8',  '9',  '0',
     '-',  '=',  0,    9,    'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',
@@ -58,14 +55,23 @@ void init_kb_fallback(void){
 }
 
 void init_kb(void){
-    void* interupt_handler;
-    idt_set_descriptor(33, interupt_handler, 0x21);
-    asm("int $0x33");
     stopit();
     outportb(DATA_PORT, 0xF4);
     if(inportb(DATA_PORT) != 0xFA){
         printf_("fail to init keyboard");
     }
+}
+
+__attribute__((interrupt))
+void keyboard_handler(void*){
+    keyboard_type();
+    asm("sti");
+}
+
+
+void keyboard_type(){
+    unsigned char scan_code = inportb(0x60);
     char key=inportb(0x60);
-    putcharkb(characterTable[key]);
+    putcharus(characterTable[key]);
+    outportb(0x20, 0x20);
 }

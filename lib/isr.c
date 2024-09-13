@@ -1,6 +1,9 @@
 #include "isr.h"
+#include <idt.h>
+#include <keyboard.h>
 
-void exception_handler() {
+void exception_handler(void*) {
     printf_("interupt detected");
-    __asm__ volatile ("hlt");
+    pic_1_send_eoi();
+    asm("hlt");
 }

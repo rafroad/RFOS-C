@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <printf.h>
 #include <helper.h>
+#include <stdio.h>
 #include <termfunc.h>
 #include <string.h>
 #include <gdt.h>
@@ -13,15 +14,12 @@
 #include <shell.h>
 
 void kernel_main(void){
-    int i=0;
     init_gdt();
     idt_init();
     pic_init();
     terminal_init();
     drawostitle();
-    // init_kb();
-    while(true){
-        printf_("%i",i);
-        i++;
+    for(;;){
+        asm("hlt");
     }
 }

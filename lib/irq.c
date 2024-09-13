@@ -8,6 +8,7 @@ REMEMBER TO RUN STOPIT BEFORE READING A PORT TO PREVENT SYSTEM CRASH
 
 */
 
+
 // read something from a port
 unsigned char inportb(unsigned int port){
     unsigned char ret;

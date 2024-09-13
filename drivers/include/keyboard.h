@@ -14,7 +14,7 @@ extern "C" {
 
 void init_kb();
 void init_kb_fallback(void);
-void keyboard_handler(void);
+void keyboard_handler(void*);
 
 #ifdef __cplusplus
 }
