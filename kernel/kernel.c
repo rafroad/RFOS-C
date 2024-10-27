@@ -12,11 +12,14 @@
 #include <irq.h>
 #include <pic.h>
 #include <shell.h>
+#include <paging.h>
 
 void kernel_main(void){
     init_gdt();
     idt_init();
     pic_init();
+    liballoc_init();
+    printf("GDT IDT PIC AND LIBALLOC SUCCESS\n");
     terminal_init();
     drawostitle();
     shellinit();

@@ -82,6 +82,9 @@ coresys:
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSREL)
 	$(CC) -c lib/irq.c -o build/irq.o $(CFLAGSREL)
 	$(CC) -c lib/pic.c -o build/pic.o $(CFLAGSREL)
+	$(CC) -c lib/liballoc.c -o build/liballoc.o $(CFLAGSREL)
+	$(CC) -c lib/paging.c -o build/paging.o $(CFLAGSREL)
+
 
 
 coresys-debug:
@@ -91,6 +94,8 @@ coresys-debug:
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSDEB)
 	$(CC) -c lib/irq.c -o build/irq.o $(CFLAGSDEB)
 	$(CC) -c lib/pic.c -o build/pic.o $(CFLAGSDEB)
+	$(CC) -c lib/liballoc.c -o build/liballoc.o $(CFLAGSDEB)
+	$(CC) -c lib/paging.c -o build/paging.o $(CFLAGSDEB)
 
 driver-rel:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTREL)
