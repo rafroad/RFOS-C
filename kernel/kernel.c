@@ -13,14 +13,21 @@
 #include <pic.h>
 #include <shell.h>
 #include <paging.h>
+#include <fs.h>
 
 void kernel_main(void){
     init_gdt();
     idt_init();
     pic_init();
     liballoc_init();
-    printf("GDT IDT PIC AND LIBALLOC SUCCESS\n");
     terminal_init();
+    printf("GDT IDT PIC AND LIBALLOC SUCCESS\n");
+    if(loadFileSystem()){
+        printf_("success init fs\n");
+    }
+    else{
+        printf_("ERROR fail to init fs\n");
+    }
     drawostitle();
     shellinit();
     for(;;) {

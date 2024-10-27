@@ -100,11 +100,13 @@ coresys-debug:
 driver-rel:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTREL)
 	$(CC) -c drivers/cursor.c -o build/cursor.o $(CFLAGSINTREL)
+	$(CC) -c drivers/fs.c -o build/fs.o $(CFLAGSINTREL)
 
 
 driver-deb:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTDEB)
 	$(CC) -c drivers/cursor.c -o build/cursor.o $(CFLAGSINTDEB)
+	$(CC) -c drivers/fs.c -o build/fs.o $(CFLAGSINTDEB)
 
 kernel-rel:
 	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
@@ -123,12 +125,12 @@ cleaniso:
 	rm -rf *.iso
 
 run:
-	qemu-system-i386 -cdrom RFOS.iso
+	qemu-system-i386 -cdrom RFOS.iso -drive file=fat:rw:build/fs/ -boot menu=on
 
 debugrun:
 	make debug
-	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio
+	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio -drive file=fat:rw:build/fs/ -boot menu=on
 
 debugrunnogdb:
 	make debug
-	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio -d int
+	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio -drive file=fat:rw:build/fs/ -boot menu=on
