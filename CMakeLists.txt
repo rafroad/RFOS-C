@@ -5,8 +5,6 @@ project(RFOS C ASM)
 # Set toolchain-specific variables with exact paths from Makefile
 set(CMAKE_C_COMPILER "$ENV{HOME}/opt/cross/bin/i686-elf-gcc")
 set(CMAKE_ASM_COMPILER "$ENV{HOME}/opt/nasm/bin/nasm")
-set(CMAKE_ASM_NASM_SOURCE_FILE_EXTENSIONS s)
-set(CMAKE_ASM_NASM_OBJECT_FORMAT elf32)
 set(GRUB_MKRESCUE "$ENV{HOME}/opt/grub/bin/grub-mkrescue")
 
 # Compiler flags exactly as in Makefile
@@ -21,6 +19,7 @@ set(COMMON_INCLUDES
 set(COMMON_FLAGS "-std=gnu99 -ffreestanding -Wall -Wextra")
 set(CMAKE_C_FLAGS_RELEASE "${COMMON_FLAGS} -O2")
 set(CMAKE_C_FLAGS_DEBUG "${COMMON_FLAGS} -g")
+SET(CMAKE_ASM_FLAGS "-felf32")
 
 # Interrupt-specific flags
 set(INTERRUPT_FLAGS_RELEASE "${COMMON_FLAGS} -mgeneral-regs-only -O2")
@@ -62,10 +61,15 @@ add_library(coresys STATIC
     lib/irq.c
     lib/pic.c
 )
+set_source_files_properties(lib/isr.s PROPERTIES
+    LANGUAGE ASM
+    COMPILE_FLAGS "-felf32")
+
+target_sources(coresys PRIVATE lib/isr.s)
 set_source_files_properties(lib/isr.c PROPERTIES
     COMPILE_FLAGS "${INTERRUPT_FLAGS_RELEASE}")
-target_include_directories(coresys PRIVATE ${COMMON_INCLUDES})
 
+target_include_directories(coresys PRIVATE ${COMMON_INCLUDES})
 # Drivers library
 add_library(drivers STATIC
     drivers/keyboard.c

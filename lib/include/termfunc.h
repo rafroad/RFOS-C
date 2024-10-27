@@ -9,10 +9,9 @@
 extern "C" {
 #endif
 
-
-
 static inline uint16_t vga_entry(unsigned char uc,uint8_t color);
 void putentryat(unsigned char c,uint8_t color,size_t x,size_t y);
+void putcharkb(char c);
 void putcharus(char c);
 void terminal_init(void);
 void terminal_setcolor(uint8_t color);

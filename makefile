@@ -8,9 +8,7 @@ LFDEB = -ffreestanding -g -nostdlib build/*.o -lgcc -I ./libc/include -I ./lib/i
 CFLAGSINTREL = -std=gnu99 -mgeneral-regs-only -ffreestanding -O2 -Wall -Wextra -I libc/include -I lib/include -I drivers/include -I kernel/include
 CFLAGSINTDEB = -std=gnu99 -mgeneral-regs-only -ffreestanding -g -Wall -Wextra -I libc/include -I lib/include -I drivers/include -I kernel/include
 
-allrun:
-	make all
-	make run
+
 
 all:
 	make clean
@@ -27,10 +25,14 @@ all:
 	~/opt/grub/bin/grub-mkrescue -o RFOS.iso isodir
 	#run 'make run' to run qemu
 
+allrun:
+	make all
+	make run
+
 debug:
 	make clean
 	make boot
-	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSDEB)
+	make kernel-deb
 	make libc-debug
 	make libhelp-debug
 	make coresys-debug
@@ -90,15 +92,18 @@ coresys-debug:
 
 driver-rel:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTREL)
+	$(CC) -c drivers/cursor.c -o build/cursor.o $(CFLAGSINTREL)
+
 
 driver-deb:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTDEB)
+	$(CC) -c drivers/cursor.c -o build/cursor.o $(CFLAGSINTDEB)
 
 kernel-rel:
 	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
 	$(CC) -c kernel/shell.c -o build/shell.o $(CFLAGSREL)
 
-kernel-deb5:
+kernel-deb:
 	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSDEB)
 	$(CC) -c kernel/shell.c -o build/shell.o $(CFLAGSDEB)
 
