@@ -8,6 +8,15 @@
 #include <shell.h>
 #define DATA_PORT 0x60
 #define SIGNAL_PORT 0x64
+#define BACKSPACE 0x0E
+#define ENTER 0x1C
+
+static const size_t VGA_WIDTH = 80;
+static const size_t VGA_HEIGHT = 25;
+
+// Buffer to store typed characters
+static char input_buffer[256];
+static size_t buffer_pos = 0;
 
 bool inscanf=false;
 
@@ -48,54 +57,47 @@ char relkey[]={0x81,
 0xC4,  	0xC5,  	0xC6,  	0xC7,  0xC8,  	0xC9,  	0xCA,  	0xCB,  0xCC,  	0xCD, 	0xCE,  	0xCF,  0xD0,  	0xD1,  	0xD2,  	0xD3,  0xD7,  0xD8,
 };
 
-void init_kb_fallback(void){
-
-    stopit();
-    outportb(DATA_PORT, 0xF4);
-    if(inportb(DATA_PORT) != 0xFA){
-        printf_("fail to init keyboard");
-    }
-    while (true) {
-        if(inportb(DATA_PORT)!= 0xFE){
-            char key=inportb(0x60);
-            putcharkb(characterTable[key]);
-            outportb(DATA_PORT, 'A');
-        }
-    }
-}
-
 void init_kb(void){
     outportb(DATA_PORT, 0xF4);
     outportb(DATA_PORT, 0xF0);
     outportb(DATA_PORT, 0x02);
 }
 
-__attribute__((interrupt))
-void keyboard_handler(void*){
-    keyboard_type();
-    asm("sti");
+void keyboardtype(void) {
+    unsigned char scancode = inportb(DATA_PORT);
+
+    if (scancode == BACKSPACE) {
+        if (buffer_pos > 0) {
+            buffer_pos--;
+            termdellastchar();
+        }
+    }
+    else if (scancode == ENTER) {
+        printf_("\n");
+        input_buffer[buffer_pos] = '\0';
+        process_shell_input(input_buffer);  // Call shell directly
+        buffer_pos = 0;
+    }
+    else if (check_rel_key(scancode, relkey, 85)) {
+        if (buffer_pos < sizeof(input_buffer) - 1) {
+            char c = characterTable[scancode];
+            if (c) {
+                input_buffer[buffer_pos++] = c;
+                putcharus(c);
+            }
+        }
+    }
+
+    outportb(0x20, 0x20);  // Send EOI
 }
 
-
-void keyboard_type(){
-    unsigned char scan_code = inportb(0x60);
-    int i=0;
-    char buffer[100];
-    if(scan_code==0x0E){
-        termdellastchar();
-    }
-    if(check_rel_key(scan_code,relkey,85)){
-        putcharkb(characterTable[scan_code]);
-        buffer[i]=characterTable[scan_code];
-        i++;
-    }
-    if(scan_code==0x0E){
-        termdellastchar();
-    }
-    if(scan_code==0x1C){
-        printf_("%s",buffer);
-    }
-    outportb(0x20, 0x20);
+__attribute__((interrupt))
+void keyboard_handler(void* _) {
+    asm volatile("pushf");
+    asm volatile("cli");
+    keyboardtype();
+    // Restore interrupt state
+    asm volatile("popf");
 }
 
 bool check_rel_key(char c, char list[], int listSize) {

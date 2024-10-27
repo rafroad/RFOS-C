@@ -14,7 +14,8 @@ extern "C" {
 #endif
 
 void shellinit();
-void shell_option(int option);
+void shell_option(char option[]);
+void process_shell_input(char* input);
 
 #ifdef __cplusplus
 }

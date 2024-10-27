@@ -20,4 +20,7 @@ void kernel_main(void){
     terminal_init();
     drawostitle();
     shellinit();
+    for(;;) {
+        asm("hlt");  // Wait for next interrupt
+    }
 }

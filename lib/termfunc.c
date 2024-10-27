@@ -60,26 +60,6 @@ void putentryat(unsigned char c,uint8_t color,size_t x,size_t y){
     terminal_buffer[index]=vga_entry(c,color);
 }
 
-void putcharkb(char c){
-    unsigned char uc=c;
-    putentryat(uc,terminal_color,terminal_column,terminal_row);
-    if(++terminal_column==VGA_WIDTH){
-        terminal_column=0;
-        if(++terminal_row==VGA_HEIGHT){
-            termdellastline();
-            termscroll(1);
-            terminal_column=VGA_HEIGHT-1;
-        }
-    }
-    if(terminal_row == VGA_HEIGHT){
-        termscroll(1);
-        termdellastline();
-        terminal_row=VGA_HEIGHT-1;
-    }
-    update_cursor(terminal_column, terminal_row);
-}
-
-
 void putcharus(char c){
     unsigned char uc=c;
     putentryat(uc,terminal_color,terminal_column,terminal_row);
@@ -109,9 +89,8 @@ void putcharus(char c){
         termdellastline();
         terminal_row=VGA_HEIGHT-1;
     }
-    update_cursor(terminal_column, terminal_row);
+    setcursorpos(terminal_column,terminal_row);
 }
-
 
 void terminal_init(void){
     terminal_row=0;
@@ -119,6 +98,7 @@ void terminal_init(void){
     terminal_color=vga_entry_color(VGA_BLACK,VGA_LIGHT_GREY);
     terminal_buffer=(uint16_t*) 0xB8000;
     enable_cursor(0,VGA_WIDTH);
+    // disable_cursor();
     for(size_t y=0; y<VGA_HEIGHT;y++){
         for(size_t x=0;x<VGA_WIDTH;x++){
             const size_t index=y*VGA_WIDTH+x;
@@ -138,9 +118,8 @@ void termdellastline(void){
 }
 void termdellastchar(void){
     terminal_column--;
-    putcharkb(0x00);
+    putcharus(0x00);
     terminal_buffer--;
-    update_cursor(terminal_column, terminal_row);
 }
 void terminal_newline(){
     terminal_column=0;

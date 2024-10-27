@@ -47,6 +47,7 @@ libc-rel:
 	$(CC) -c libc/stdio/printf.c -o build/printf.o $(CFLAGSREL)
 	$(CC) -c libc/stdio/puts.c -o build/stdio.o $(CFLAGSREL)
 	$(CC) -c libc/stdlib/abort.c -o build/abort.o $(CFLAGSREL)
+	$(CC) -c libc/stdlib/atoi.c -o build/atoi.o $(CFLAGSREL)
 	$(CC) -c libc/string/memcmp.c -o build/memcmp.o $(CFLAGSREL)
 	$(CC) -c libc/string/memcpy.c -o build/memcpy.o $(CFLAGSREL)
 	$(CC) -c libc/string/memmove.c -o build/memmove.o $(CFLAGSREL)
@@ -58,6 +59,7 @@ libc-debug:
 	$(CC) -c libc/stdio/printf.c -o build/printf.o $(CFLAGSDEB)
 	$(CC) -c libc/stdio/puts.c -o build/stdio.o $(CFLAGSDEB)
 	$(CC) -c libc/stdlib/abort.c -o build/abort.o $(CFLAGSDEB)
+	$(CC) -c libc/stdlib/atoi.c -o build/atoi.o $(CFLAGSDEB)
 	$(CC) -c libc/string/memcmp.c -o build/memcmp.o $(CFLAGSDEB)
 	$(CC) -c libc/string/memcpy.c -o build/memcpy.o $(CFLAGSDEB)
 	$(CC) -c libc/string/memmove.c -o build/memmove.o $(CFLAGSDEB)
@@ -124,4 +126,4 @@ debugrun:
 
 debugrunnogdb:
 	make debug
-	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio
+	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio -d int
