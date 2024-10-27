@@ -5,9 +5,14 @@
 #include <irq.h>
 #include "shell.h"
 #include <liballoc.h>
+#include <termfunc.h>
+#include <helper.h>
+
+char option[][1000]={"test","hello","clear"};
 
 
 void shellinit(void) {
+    drawmultextnum(option,3);
     printf_(">");
 }
 
@@ -20,16 +25,9 @@ void shell_option(char* input) {
             printf("hello from RFOS \n");
             break;
         case 3:
-            char* str = malloc(4);
-            if (str != NULL) {
-                printf("Allocated %d pages at address: %p\n", 4, str);
-            } else {
-                printf("Allocation failed for %d pages.\n", 4);
-            }
-            str[0]='h';str[1]='e';str[2]='y';str[3]='\0';
-            printf("%s\n",str);
-            free(str);
-            printf("freed memory from %p\n",str);
+            termclear();
+            drawostitle();
+            drawmultextnum(option,3);
             break;
         default:
             printf_("invalid input\n");

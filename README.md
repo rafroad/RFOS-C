@@ -4,8 +4,8 @@ current list of things to work on:
 2. IDT (basic exist thanks to osdev tutorial)
 3. KB input (done)
 4. Basic shell (working)
-5. FAT filesystem (https://github.com/Soreing/Sore-OS/tree/main/drivers)
-6. schedulers allocator userland
+5. schedulers allocator userland
+6. FAT32 filesystem
 7. All of the old RF OS in CosmosOS
 
 ## COMPILE STEP

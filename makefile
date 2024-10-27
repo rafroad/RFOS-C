@@ -54,6 +54,7 @@ libc-rel:
 	$(CC) -c libc/string/memset.c -o build/memset.o $(CFLAGSREL)
 	$(CC) -c libc/string/strlen.c -o build/strlen.o $(CFLAGSREL)
 	$(CC) -c libc/string/strcpy.c -o build/strcpy.o $(CFLAGSREL)
+	$(CC) -c libc/string/strcmp.c -o build/strcmp.o $(CFLAGSREL)
 
 libc-debug:
 	$(CC) -c libc/stdio/printf.c -o build/printf.o $(CFLAGSDEB)
@@ -66,6 +67,8 @@ libc-debug:
 	$(CC) -c libc/string/memset.c -o build/memset.o $(CFLAGSDEB)
 	$(CC) -c libc/string/strlen.c -o build/strlen.o $(CFLAGSDEB)
 	$(CC) -c libc/string/strcpy.c -o build/strcpy.o $(CFLAGSDEB)
+	$(CC) -c libc/string/strcmp.c -o build/strcmp.o $(CFLAGSDEB)
+
 
 libhelp:
 	$(CC) -c lib/termfunc.c -o build/termfunc.o $(CFLAGSREL)
@@ -100,13 +103,12 @@ coresys-debug:
 driver-rel:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTREL)
 	$(CC) -c drivers/cursor.c -o build/cursor.o $(CFLAGSINTREL)
-	$(CC) -c drivers/fs.c -o build/fs.o $(CFLAGSINTREL)
 
 
 driver-deb:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTDEB)
 	$(CC) -c drivers/cursor.c -o build/cursor.o $(CFLAGSINTDEB)
-	$(CC) -c drivers/fs.c -o build/fs.o $(CFLAGSINTDEB)
+
 
 kernel-rel:
 	$(CC) -c kernel/kernel.c -o build/kernel.o $(CFLAGSREL)
@@ -125,12 +127,10 @@ cleaniso:
 	rm -rf *.iso
 
 run:
-	qemu-system-i386 -cdrom RFOS.iso -drive file=fat:rw:build/fs/ -boot menu=on
-
+	qemu-system-i386 -cdrom RFOS.iso
 debugrun:
 	make debug
-	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio -drive file=fat:rw:build/fs/ -boot menu=on
-
+	qemu-system-i386 -s -S -kernel build/RFOS-debug.bin -monitor stdio
 debugrunnogdb:
 	make debug
-	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio -drive file=fat:rw:build/fs/ -boot menu=on
+	qemu-system-i386 -kernel build/RFOS-debug.bin -monitor stdio

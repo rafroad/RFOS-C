@@ -5,6 +5,7 @@
 #include <string.h>
 #include <helper.h>
 #include <irq.h>
+#include <shell.h>
 
 #define OSVER "RFOS-V1.0-TEST"
 

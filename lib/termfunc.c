@@ -130,9 +130,14 @@ size_t printcentre(void){
     terminal_column=VGA_WIDTH/2;
 }
 
-void termclear(){
-    for(uint16_t i=-1;i<=terminal_buffer;i++){
-        terminal_buffer[i]=0x00;
-        terminal_buffer=0;
+void termclear(void) {
+    for (size_t y = 0; y < VGA_HEIGHT; y++) {
+        for (size_t x = 0; x < VGA_WIDTH; x++) {
+            const size_t index = y * VGA_WIDTH + x;
+            terminal_buffer[index] = vga_entry(' ', terminal_color);
+        }
     }
+    terminal_row = 0;
+    terminal_column = 0;
+    setcursorpos(0, 0);
 }
