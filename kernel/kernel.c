@@ -20,12 +20,10 @@ void kernel_main(void){
     idt_init();
     pic_init();
     liballoc_init();
+    initTasking();
     terminal_init();
     printf("GDT IDT PIC AND LIBALLOC SUCCESS\n");
     termclear();
     drawostitle();
     shellinit();
-    for(;;) {
-        asm("hlt");  // Wait for next interrupt
-    }
 }

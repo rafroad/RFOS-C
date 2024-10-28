@@ -10,6 +10,7 @@
 #define SIGNAL_PORT 0x64
 #define BACKSPACE 0x0E
 #define ENTER 0x1C
+#define RELEASE_BIT 0x80  // Bit that indicates key release
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -66,25 +67,31 @@ void init_kb(void){
 void keyboardtype(void) {
     unsigned char scancode = inportb(DATA_PORT);
 
+    // Ignore key releases (when highest bit is set)
+    if (scancode & RELEASE_BIT) {
+        outportb(0x20, 0x20);  // Send EOI
+        return;
+    }
+
+    // Handle key press events
     if (scancode == BACKSPACE) {
         if (buffer_pos > 0) {
             buffer_pos--;
-            termdellastchar();
+            termdellastchar();  // Use dedicated function to remove character
         }
     }
     else if (scancode == ENTER) {
-        printf_("\n");
+        putcharus('\n');
         input_buffer[buffer_pos] = '\0';
-        process_shell_input(input_buffer);  // Call shell directly
+        process_shell_input(input_buffer);
         buffer_pos = 0;
     }
-    else if (check_rel_key(scancode, relkey, 85)) {
-        if (buffer_pos < sizeof(input_buffer) - 1) {
-            char c = characterTable[scancode];
-            if (c) {
-                input_buffer[buffer_pos++] = c;
-                putcharus(c);
-            }
+    else {
+        // Check if we have a valid character for this scancode
+        char c = characterTable[scancode];
+        if (c && buffer_pos < sizeof(input_buffer) - 1) {
+            input_buffer[buffer_pos++] = c;
+            putcharus(c);
         }
     }
 
@@ -107,4 +114,8 @@ bool check_rel_key(char c, char list[], int listSize) {
         }
     }
     return true;
+}
+
+void reset_buffer(void){
+    buffer_pos = 0;
 }

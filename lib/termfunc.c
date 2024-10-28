@@ -12,7 +12,7 @@ enum vga_color{
     VGA_LIGHT_GREY=7,
 };
 
-
+#define BACKSPACE 0x08
 
 static const size_t VGA_WIDTH=80;
 static const size_t VGA_HEIGHT=25;
@@ -60,36 +60,37 @@ void putentryat(unsigned char c,uint8_t color,size_t x,size_t y){
     terminal_buffer[index]=vga_entry(c,color);
 }
 
-void putcharus(char c){
-    unsigned char uc=c;
-    putentryat(uc,terminal_color,terminal_column,terminal_row);
-    if(++terminal_column==VGA_WIDTH){
-        terminal_column=0;
-        if(++terminal_row==VGA_HEIGHT){
-            termdellastline();
-            termscroll(1);
-            terminal_column=VGA_HEIGHT-1;
-        }
-    }
-    else if(c=='\n'){
-        terminal_newline();
-    }
-    else if(c=='\t'){
-        for(int i=0;i<3;i++){
-            terminal_column++;
-        }
-    }
-    else if(c=='\v'){
-        for(int i=0;i<3;i++){
+void putcharus(char c) {
+    unsigned char uc = c;
+
+    // Handle special characters
+    switch (uc) {
+        case '\n':
+            terminal_column = 0;
             terminal_row++;
-        }
+            break;
+
+        case '\r':
+            terminal_column = 0;
+            break;
+
+        case '\t':
+            // Move to next tab stop (every 4 columns)
+            terminal_column = (terminal_column + 4) & ~3;
+            break;
+
+        case '\v':
+            terminal_row += 3;  // Vertical tab - move down 3 lines
+            break;
+
+        default:
+            // Regular character
+            putentryat(uc, terminal_color, terminal_column, terminal_row);
+            terminal_column++;
+            break;
     }
-    if(terminal_row == VGA_HEIGHT){
-        termscroll(1);
-        termdellastline();
-        terminal_row=VGA_HEIGHT-1;
-    }
-    setcursorpos(terminal_column,terminal_row);
+
+    update_cursor_position();
 }
 
 void terminal_init(void){
@@ -116,11 +117,21 @@ void termdellastline(void){
         putentryat(' ',terminal_color,i,VGA_HEIGHT-1);
     }
 }
-void termdellastchar(void){
-    terminal_column--;
-    putcharus(0x00);
-    terminal_buffer--;
+void termdellastchar(void) {
+    if (terminal_column > 0) {
+        terminal_column--;
+    }
+    else if (terminal_row > 0) {
+        terminal_row--;
+        terminal_column = VGA_WIDTH - 1;
+    }
+
+    // Clear the character at current position
+    putentryat(0x00, terminal_color, terminal_column, terminal_row);
+    setcursorpos(terminal_column, terminal_row);
 }
+
+
 void terminal_newline(){
     terminal_column=0;
     terminal_row++;
@@ -140,4 +151,48 @@ void termclear(void) {
     terminal_row = 0;
     terminal_column = 0;
     setcursorpos(0, 0);
+}
+
+void update_cursor_position(void) {
+    // Handle horizontal wrapping
+    if (terminal_column >= VGA_WIDTH) {
+        terminal_column = 0;
+        terminal_row++;
+    }
+    // Handle backwards wrapping
+    else if (terminal_column < 0) {
+        terminal_column = VGA_WIDTH - 1;
+        terminal_row--;
+    }
+
+    // Handle vertical bounds and scrolling
+    if (terminal_row >= VGA_HEIGHT) {
+        termscroll(1);
+        termdellastline();
+        terminal_row = VGA_HEIGHT - 1;
+    }
+    else if (terminal_row < 0) {
+        terminal_row = 0;
+        terminal_column = 0;
+    }
+
+    setcursorpos(terminal_column, terminal_row);
+}
+
+void handle_backspace(void) {
+    if (terminal_column > 0) {
+        terminal_column--;
+    }
+    else if (terminal_row > 0) {
+        terminal_row--;
+        terminal_column = VGA_WIDTH - 1;
+    }
+    else {
+        // At top-left corner, nothing to delete
+        return;
+    }
+
+    // Clear the character at new cursor position
+    putentryat(0x00, terminal_color, terminal_column, terminal_row);
+    update_cursor_position();
 }

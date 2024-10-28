@@ -80,6 +80,8 @@ libhelp-debug:
 
 coresys:
 	$(ASMB) -felf32 lib/isr.s -o build/isrs.o
+	$(ASMB) -felf32 lib/switch.s -o build/switch.o
+	$(ASMB) -felf32 lib/paging.s -o build/pagings.o
 	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSINTREL)
 	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSREL)
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSREL)
@@ -87,11 +89,14 @@ coresys:
 	$(CC) -c lib/pic.c -o build/pic.o $(CFLAGSREL)
 	$(CC) -c lib/liballoc.c -o build/liballoc.o $(CFLAGSREL)
 	$(CC) -c lib/paging.c -o build/paging.o $(CFLAGSREL)
+	$(CC) -c lib/tasks.c -o build/tasks.o $(CFLAGSREL)
 
 
 
 coresys-debug:
 	$(ASMB) -felf32 lib/isr.s -o build/isrs.o
+	$(ASMB) -felf32 lib/switch.s -o build/switch.o
+	$(ASMB) -felf32 lib/paging.s -o build/pagings.o
 	$(CC) -c lib/isr.c -o build/isr.o $(CFLAGSINTDEB)
 	$(CC) -c lib/idt.c -o build/idt.o $(CFLAGSDEB)
 	$(CC) -c lib/gdt.c -o build/gdt.o $(CFLAGSDEB)
@@ -99,6 +104,7 @@ coresys-debug:
 	$(CC) -c lib/pic.c -o build/pic.o $(CFLAGSDEB)
 	$(CC) -c lib/liballoc.c -o build/liballoc.o $(CFLAGSDEB)
 	$(CC) -c lib/paging.c -o build/paging.o $(CFLAGSDEB)
+	$(CC) -c lib/tasks.c -o build/tasks.o $(CFLAGSDEB)
 
 driver-rel:
 	$(CC) -c drivers/keyboard.c -o build/keyboard.o $(CFLAGSINTREL)
